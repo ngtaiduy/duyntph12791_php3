@@ -1,34 +1,45 @@
 @extends('admin.layouts.main')
 @section('content')
 
-<div>
-    <div>
-        <h2>THAY ĐỔI MẬT KHẨU</h2>
+<form action="" method="POST">
+    @csrf
+    <!-- Text input -->
+    <div class="form-outline mb-4">
+        <label class="form-label" for="form6Example3">Nhập mật khẩu hiện tại</label>
+        <input type="password" name="password" class="form-control" />
+        @if (Session::has('message_password'))
+            <p class="text-danger">{{Session::get('message_password')}}</p>
+        @endif
+        {{-- @error('password')
+            <p class="text-danger">{{$message}}</p>
+        @enderror --}}
     </div>
-    <div>
-        <form action="" method="POST">
-            @csrf
-            <div>
-                <label for="">Nhập mật khẩu của bạn</label>
-                <input type="password" name="password" id="">
-                @if (Session::has('message_password'))
-                    <p class="text-danger">{{Session::get('message_password')}}</p>
-                @endif
-            </div>
-            <div>
-                <label for="">Nhập mật khẩu mới</label>
-                <input type="password" name="newpassword" id="">
-            </div>
-            <div>
-                <label for="">Nhập lại mật khẩu mới</label>
-                <input type="password" name="newpassword2" id="">
-            </div>
+  
+    <!-- Text input -->
+    <div class="form-outline mb-4">
+        <label class="form-label" for="form6Example3">Nhập mật khẩu mới</label>
+        <input type="password" name="newpassword" class="form-control" />
+        @error('newpassword')
+            <p class="text-danger">{{$message}}</p>
+        @enderror
+    </div>
+  
+    <!-- Email input -->
+    <div class="form-outline mb-4">
+        <label class="form-label" for="form6Example3">Nhập lại mật khẩu mới</label>
+        <input type="password" name="newpassword2" class="form-control" />
+        @error('newpassword2')
+            <p class="text-danger">{{$message}}</p>
+        @enderror
+        @if (Session::has('message_password2'))
+            <p class="text-danger">{{Session::get('message_password2')}}</p>
+        @endif
+    </div>
+  
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-primary btn-block mb-4">Lưu</button>
+  </form>
 
-            <div>
-                <button type="submit">Thay đổi mật khẩu</button>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 @endsection

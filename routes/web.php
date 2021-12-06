@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('home.home');
+    return view('welcome');
 })->name('home');
 
 Route::get('/demo', function () {
@@ -29,6 +29,8 @@ Route::any('logout', function(){
     Auth::logout();
     return redirect(route('home'));
 })->name('logout');
+Route::get('register', [UserController::class, 'register'])->name('register');
+Route::post('register', [UserController::class, 'saveRegister']);
 
 Route::prefix('car')->group(function(){
     Route::get('/', [CarController::class, 'index'])->name('car.index');

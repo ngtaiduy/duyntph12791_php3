@@ -12,6 +12,9 @@
                             <div class="form-group">
                                 <label for="">Biển số xe</label>
                                 <input type="text" value="{{$car->plate_number}}" class="form-control" name="plate_number" id="">
+                                @error('plate_number')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                                 @if (session('message_plate_number')) <div class="text-danger"> {{ session('message_plate_number') }} </div> @endif
                             </div>
                         </div>
@@ -19,19 +22,28 @@
                             <div class="form-group">
                                 <label for="">Ảnh biển số</label>
                                 <input type="file" class="form-control" name="plate_image" id="">
+                                @error('plate_image')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="">Chủ sở hữu</label>
                                 <input type="text" value="{{$car->owner}}" class="form-control" name="owner" id="">
+                                @error('owner')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="">Phí</label>
                                 <input type="number" value="{{$car->travel_fee}}" class="form-control" name="travel_fee" id="">
-                                @if (session('message_travel_fee')) <div class="text-danger"> {{ session('message_travel_fee') }} </div> @endif
+                                @error('travel_fee')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
+                                {{-- @if (session('message_travel_fee')) <div class="text-danger"> {{ session('message_travel_fee') }} </div> @endif --}}
                             </div>
                         </div>
                         <div class="col-6">

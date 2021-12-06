@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Route;
 //     Route::post('edit/{id}', [UserController::class, 'saveEdit']);
 // });
 Route::prefix('user')->group(function(){
-    Route::get('/', [UserController::class, 'index'])->name('user.index');
+    Route::get('/', [UserController::class, 'index'])->middleware('admin-role')->name('user.index');
     Route::get('/detail-user/{id}', [UserController::class, 'detail'])->name('user.detail');
 
     Route::get('remove/{id}', [UserController::class, 'remove'])->middleware('admin-role')->name('user.remove');
@@ -55,8 +55,12 @@ Route::prefix('user')->group(function(){
 
     Route::get('edit/{id}', [UserController::class, 'editForm'])->middleware('user-detail-role')->name('user.edit');
     Route::post('edit/{id}', [UserController::class, 'saveEdit'])->middleware('user-detail-role');
-    Route::get('/change-password/{id}', [UserController::class, 'changePassword'])->middleware('change-password-role')->name('change-password');
-    Route::post('/change-password/{id}', [UserController::class, 'saveChange'])->middleware('change-password-role');
+
+    Route::get('edit-role/{id}', [UserController::class, 'editRole'])->middleware('admin-role')->name('user.edit-role');
+    Route::post('edit-role/{id}', [UserController::class, 'saveRole'])->middleware('admin-role');
+
+    Route::get('/change-password/{id}', [UserController::class, 'changePassword'])->middleware('user-detail-role')->name('change-password');
+    Route::post('/change-password/{id}', [UserController::class, 'saveChange'])->middleware('user-detail-role');
 });
 
 Route::prefix('car')->group(function(){
@@ -80,21 +84,19 @@ Route::prefix('passenger')->group(function(){
     Route::post('edit/{id}', [PassengerController::class, 'saveEdit'])->middleware('staff-role');
 });
 
+
+Route::any('/', function (){
+    return view('auth.dashboard');
+})->name('admin-dashboard');
 Route::any('forbiddance-admin', function (){
-    return "Trang này danh cho admin, bạn không có quyền truy cập";
+    return view('auth.user-admin');
 })->name('forbiddance-admin');
-
 Route::any('forbiddance-staff', function (){
-    return "Trang này danh cho nhân viên, bạn không có quyền truy cập";
+    return view('auth.user-staff');
 })->name('forbiddance-staff');
-
 Route::any('forbiddance-detail', function (){
-    return "Bạn không thể thay đổi thông tin của tài khoản khác";
+    return view('auth.user-detail');
 })->name('forbiddance-detail');
-
-Route::any('forbiddance-change-password', function (){
-    return "Bạn không thể thay đổi mật khẩu của tài khoản khác";
-})->name('forbiddance-change-password');
 
 Route::resource("users", UserController::class);
 

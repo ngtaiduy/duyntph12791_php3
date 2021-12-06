@@ -20,7 +20,7 @@ class UserDetail
         if (!Auth::check()){
             return redirect(route('login'));
         }
-        if (Auth::user()->role_id > 1  &&  Auth::user()->id != $request->id){
+        if (Auth::user()->id != $request->id){
             return redirect(route('forbiddance-detail'));
         }
         return $next($request);

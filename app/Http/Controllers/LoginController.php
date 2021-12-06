@@ -16,7 +16,7 @@ class LoginController extends Controller
         $email = $request->email;
         $password = $request->password;
         if(Auth::attempt(['email' => $email, 'password' => $password], $request->remember)){
-            return redirect(route('user.index'));
+            return redirect(route('admin-dashboard'));
         }
         return back()->with('msg', 'Tài khoản/mật khẩu không chính xác');
     }

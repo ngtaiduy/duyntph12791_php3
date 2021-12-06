@@ -28,9 +28,15 @@
 
       <form action="" method="post">
           @csrf
-          @if (Session::has('message_register_success'))
-          <p class="text-primary">{{Session::get('message_register_success')}}</p>
-      @endif
+          <div class="input-group mb-3">
+            <input type="name" name="name" class="form-control" placeholder="Name">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+          </div>
+
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -38,11 +44,14 @@
               <span class="fas fa-envelope"></span>
             </div>
           </div>
-          
         </div>
+        @if (Session::has('message_email'))
+            <p class="text-danger">{{Session::get('message_email')}}</p>
+        @endif
         @error('email')
           <p class="text-danger">{{$message}}</p>
         @enderror
+        
         <div class="input-group mb-3">
           <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
@@ -54,18 +63,23 @@
         @error('password')
           <p class="text-danger">{{$message}}</p>
         @enderror
-        <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember" name="remember" value="1">
-              <label for="remember">
-                Remember Me
-              </label>
+
+        <div class="input-group mb-3">
+            <input type="password" name="password2" class="form-control" placeholder="Nhập lại Password">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
             </div>
+            
           </div>
+          @if (Session::has('message_password'))
+                <p class="text-danger">{{Session::get('message_password')}}</p>
+            @endif
+        <div class="row">
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
           </div>
           <!-- /.col -->
         </div>
@@ -74,12 +88,6 @@
       
       <!-- /.social-auth-links -->
 
-      <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
-      <p class="mb-1">
-        Chưa có tài khoản, bạn hãy <a href="/register">đăng ký</a>
-      </p>
     </div>
     <!-- /.login-card-body -->
   </div>

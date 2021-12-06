@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveUserRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,12 +15,12 @@ class UserController extends Controller
 {
     public function index(Request $request){
         $column_names = [
-            'name' => 'Username',
+            'name' => 'Name',
             'email' => 'Email'
         ];
         $order_by = [
-            'asc' => 'Tăng dần',
-            'desc' => 'Giảm dần'
+            'asc' => 'A-Z',
+            'desc' => 'Z-A'
         ];
 
         $keyword = $request->has('keyword') ? $request->keyword : "";
@@ -28,6 +29,11 @@ class UserController extends Controller
         $rq_column_names = $request->has('column_names') ? $request->column_names : "id";
 
         $query = User::where('name', 'like', "%$keyword%");
+
+        if ($request->name_email == 1) {
+            $query = User::where('email', 'like', "%$keyword%");
+        }
+        
         if($rq_order_by == 'asc'){
             $query->orderBy($rq_column_names);
         }else{
@@ -44,12 +50,16 @@ class UserController extends Controller
         $searchData = compact('keyword', 'role_id');
         $searchData['order_by'] = $rq_order_by;
         $searchData['column_names'] = $rq_column_names;
+        $searchData['name_email'] = $request->name_email;
 
         return view('users.index', compact('users', 'roles', 'column_names', 'order_by', 'searchData'));
     }
 
     public function detail($id){
         $user = User::find($id);
+        if(!$user){
+            return redirect(route('admin-dashboard'));
+        }
         $user->load('role');
         return view('users.detail', compact('user'));
     }
@@ -60,10 +70,6 @@ class UserController extends Controller
 
     public function saveChange($id, Request $request){
         $user = User::find($id);
-
-        $passwordHash = Hash::make($request->password);
-        $newP = Hash::make($request->newpassword);
-        $newP2 = Hash::make($request->newpassword2);
 
         $password = $request->password;
         $newP = $request->newpassword;
@@ -78,6 +84,8 @@ class UserController extends Controller
                 $user->password = $newPasswordHash;
                 $user->save();
                 return redirect(route('user.detail', ['id' => $id]))->with('message_success', 'Bạn đã thay đổi mật khẩu thành công');
+            } else {
+                return redirect(route('change-password', ['id' => $id]))->with('message_password2', 'Mật khẩu mới nhập lại không trùng');
             }
         } else {
             return redirect(route('change-password', ['id' => $id]))->with('message_password', 'Bạn nhập sai mật khẩu hiện tại');
@@ -111,6 +119,35 @@ class UserController extends Controller
             return redirect(route('user.add'))->with('message_password', 'Mật khẩu không trùng khớp, mời nhập lại');
         }
     }
+    
+
+    public function register(){
+        return view('auth.register');
+    }
+
+    public function saveRegister(Request $request){
+        $count_user = User::where('email', $request->email)->count();
+        if ($count_user > 0){
+            return redirect(route('register'))->with('message_email', 'Email đã có người dùng');
+        } 
+        if ($request->password == $request->password2){
+            $model = new User();
+
+            if($request->hasFile('avatar')){
+                $imgPath = $request->file('avatar')->store('users');
+                $imgPath = str_replace('public/', '', $imgPath);
+                $model->avatar = $imgPath;
+            }
+
+            $passwordHash = Hash::make($request->password);
+            $model->fill($request->all());
+            $model->password = $passwordHash;
+            $model->save();
+            return redirect(route('login'))->with('message_register_success', 'Bạn đã đăng ký thành công, mời đăng nhập');
+        } else {
+            return redirect(route('register'))->with('message_password', 'Mật khẩu không trùng khớp, mời nhập lại');
+        }
+    }
 
     public function editForm($id){
         $user = User::find($id);
@@ -137,6 +174,25 @@ class UserController extends Controller
             $imgPath = $request->file('avatar')->store('users');
             $imgPath = str_replace('public/', '', $imgPath);
             $model->avatar = $imgPath;
+        }
+        $model->fill($request->all());
+        $model->save();
+        return redirect(route('user.detail', ['id' => $id]))->with('message_success', 'Bạn đã thay đổi thông tin thành công');
+    }
+
+    public function editRole($id){
+        $user = User::find($id);
+        $roles = Role::all();
+        if (!$user){
+            return redirect()->back();
+        }
+        return view('users.edit-role', compact('user', 'roles'));
+    }
+
+    public function saveRole($id, Request $request){
+        $model = User::find($id);
+        if(!$model){
+            return redirect(route('user.index'));
         }
         $model->fill($request->all());
         $model->save();

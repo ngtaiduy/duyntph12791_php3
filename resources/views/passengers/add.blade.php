@@ -12,6 +12,9 @@
                             <div class="form-group">
                                 <label for="">Tên</label>
                                 <input type="text" name="name" class="form-control" placeholder="">
+                                @error('name')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <div class="form-group">
@@ -28,10 +31,16 @@
                             <div class="form-group">
                                 <label for="">Thời gian</label>
                                 <input type="datetime-local" name="travel_time" class="form-control" placeholder="">
+                                @error('travel_time')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label for="">Ảnh</label>
                                 <input type="file" name="avatar" class="form-control" placeholder="">
+                                @error('avatar')
+                                    <p class="text-danger">{{$message}}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-12 d-flex justify-content-end">
